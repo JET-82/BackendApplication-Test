@@ -14,10 +14,11 @@ public class SwaggerConfig {
   @Bean
   public Docket api() {
     return new Docket(DocumentationType.OAS_30)
+        .useDefaultResponseMessages(false)
         .apiInfo(apiInfo())
         .select()
         .apis(RequestHandlerSelectors.any())
-        .paths(PathSelectors.any())
+        .paths(PathSelectors.ant("/*"))
         .build();
   }
 
