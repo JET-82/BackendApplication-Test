@@ -1,0 +1,86 @@
+name: Development CI Flows
+
+on:
+  push:
+    branches:
+      - feature/food # 테스트를 위해 food branch push 이벤트 발생시 트리거
+
+env:
+  APPLICATION_RESOURCE_PATH: ./src/main/resources/application-dev.yaml
+
+jobs:
+  ci-food:
+    environment: dev # GitHub Action Secret Environment
+    ###############################
+    # GitHub Action Machine Setup #
+    ###############################
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        id: jdk-11-setup
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - run: pwd
+        shell: bash
+
+      - name: Set application yaml file
+        id: application-yaml-setup
+        uses: microsoft/variable-substitution@v1
+        with:
+          # application-dev.yaml 파일 내용 덮어쓰기
+          files: ${{ env.APPLICATION_RESOURCE_PATH }}
+        env:
+          # GitHub Action Environment - Secret 참조
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USER }}
+          spring.datasource.password: ${{ secrets.DB_PASS}}
+
+      ######################
+      # Gradle Build Steps #
+      ######################
+
+      - name: Grant execute permission for gradlew
+        id: execute-gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Build with Gradle
+        id: bradle-with-gradle
+        run: ./gradlew clean build --stacktrace --info -x test
+        shell: bash
+
+      ###############
+      # AWS ECR 배포 #
+      ###############
+      - name: Configure AWS credentials
+        id: configure-aws
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - id: login-ecr
+        name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
+        env:
+          working-directory: ./docker
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: k-food-app
+          IMAGE_TAG: ${{ github.run_number }}
+        run: |
+          pwd
+          ls -al
+          cd ./docker
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
