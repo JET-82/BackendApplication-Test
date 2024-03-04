@@ -38,13 +38,16 @@ dependencies {
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.3.1'
+
 
     // Swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    // Monitoring - Actuator
+    // implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
-test {
-    useJUnitPlatform()
-}
+test.useJUnitPlatform()
+bootJar.enabled(true)
+jar.enabled(false)
