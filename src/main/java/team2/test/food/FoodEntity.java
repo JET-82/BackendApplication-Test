@@ -23,15 +23,11 @@ public class FoodEntity extends BaseEntity {
 
   @Column(nullable = false, length = 100)
   @Setter
-  private Integer price;
+  private String price;
 
+  @Column @Lob @Setter private String imageLink;
 
-  @Column
-  @Lob
-  @Setter
-  private String imageLink;
-
-  public static FoodEntity of(String foodName, String description, Integer price) {
+  public static FoodEntity of(String foodName, String description, String price) {
     return new FoodEntity(null, foodName, description, price, null);
   }
 }

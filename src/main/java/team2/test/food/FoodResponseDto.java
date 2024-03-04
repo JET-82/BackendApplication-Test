@@ -21,7 +21,7 @@ public class FoodResponseDto {
   private String description;
 
   @Schema(description = "음식 가격")
-  private Integer price;
+  private String price;
 
   @Schema(description = "음식 이미지 링크")
   private String imageLink;

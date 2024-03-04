@@ -18,7 +18,7 @@ public class FoodRequestDto {
   private String description;
 
   @Schema(description = "음식 가격")
-  private Integer price;
+  private String price;
 
   public FoodEntity toEntity() {
     return FoodEntity.of(foodName, description, price);
