@@ -78,6 +78,7 @@ jobs:
           IMAGE_TAG: ${{ github.run_number }}
         run: |
           cp ./build/libs/*.jar ./docker/
+          cd ./docker
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "Pushing image to ECR..."
