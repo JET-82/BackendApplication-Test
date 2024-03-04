@@ -25,7 +25,13 @@ public class FoodEntity extends BaseEntity {
   @Setter
   private Integer price;
 
+
+  @Column
+  @Lob
+  @Setter
+  private String imageLink;
+
   public static FoodEntity of(String foodName, String description, Integer price) {
-    return new FoodEntity(null, foodName, description, price);
+    return new FoodEntity(null, foodName, description, price, null);
   }
 }
