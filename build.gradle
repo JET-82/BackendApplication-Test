@@ -45,7 +45,7 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 
     // Monitoring - Actuator
-    // implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 test.useJUnitPlatform()
