@@ -1,21 +1,24 @@
-name: Development CI Flows
+name: Build Docker Image and Deploy to ECR
 
 on:
   push:
     branches:
-      - feature/food # 테스트를 위해 food branch push 이벤트 발생시 트리거
+      - dev # 테스트를 위해 food branch push 이벤트 발생시 트리거
 
 env:
   APPLICATION_RESOURCE_PATH: ./src/main/resources/application-dev.yaml
 
 jobs:
-  ci-food:
+  dev-build:
     environment: dev # GitHub Action Secret Environment
-    ###############################
-    # GitHub Action Machine Setup #
-    ###############################
     runs-on: ubuntu-latest
+
     steps:
+
+      #####################
+      # Environment Setup #
+      #####################
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -24,9 +27,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-
-      - run: pwd
-        shell: bash
 
       - name: Set application yaml file
         id: application-yaml-setup
