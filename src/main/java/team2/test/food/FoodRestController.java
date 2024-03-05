@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team2.test.utils.ResponseType;
 
 @Tag(name = "Foods", description = "음식 정보 API")
 @Api(
@@ -34,9 +35,9 @@ public class FoodRestController {
       description = "음식 리스트 반환.",
       responses = {@ApiResponse(responseCode = "200", description = "음식 리스트 정보.")})
   @GetMapping
-  public ResponseEntity<List<FoodResponseDto>> getFoodList() {
+  public ResponseEntity<ResponseType.Result<List<FoodResponseDto>>> getFoodList() {
     List<FoodResponseDto> responseDtos = foodService.getFoods();
-    return ResponseEntity.ok(responseDtos);
+    return ResponseEntity.ok(ResponseType.success(responseDtos));
   }
 
   @Operation(
@@ -44,8 +45,8 @@ public class FoodRestController {
       description = "음식명, 설명, 가격 정보 추가.",
       responses = {@ApiResponse(responseCode = "200", description = "추가된 음식 정보.")})
   @PostMapping
-  public ResponseEntity<FoodResponseDto> register(@RequestBody FoodRequestDto requestDto) {
+  public ResponseType.Result<FoodResponseDto> register(@RequestBody FoodRequestDto requestDto) {
     FoodResponseDto responseDto = foodService.registerFood(requestDto);
-    return ResponseEntity.ok(responseDto);
+    return ResponseType.success(responseDto);
   }
 }

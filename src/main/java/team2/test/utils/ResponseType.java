@@ -3,11 +3,12 @@ package team2.test.utils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ApiResponse {
+public class ResponseType {
   public static <T> Result<T> success() {
     return new Result<>(HttpStatus.NO_CONTENT.value(), true, null, null);
   }
@@ -22,6 +23,7 @@ public class ApiResponse {
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   @AllArgsConstructor
+  @Getter
   public static class Result<T> {
     private int status;
     private boolean success;
@@ -30,6 +32,7 @@ public class ApiResponse {
   }
 
   @AllArgsConstructor
+  @Getter
   public static class Error {
     private String message;
   }
