@@ -38,7 +38,7 @@ jobs:
           # GitHub Action Environment - Secret 참조
           spring.datasource.url: ${{ secrets.DB_URL }}
           spring.datasource.username: ${{ secrets.DB_USER }}
-          spring.datasource.password: ${{ secrets.DB_PASS}}
+          spring.datasource.password: ${{ secrets.DB_PASS }}
 
       ######################
       # Gradle Build Steps #
@@ -74,7 +74,7 @@ jobs:
         env:
           working-directory: ./docker
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: final-kkb
+          ECR_REPOSITORY: k-food-app
           IMAGE_TAG: ${{ github.run_number }}
         run: |
           cp ./build/libs/*.jar ./docker/
