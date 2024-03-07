@@ -47,7 +47,9 @@ management:
   endpoints:
     enabled-by-default: true
     web:
-      base-path: "/system"
+      base-path: /system
       exposure:
         include: "*"
-
+    jmx:
+      exposure:
+        include: "*"
