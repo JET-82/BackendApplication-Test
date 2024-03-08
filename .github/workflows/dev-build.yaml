@@ -79,7 +79,7 @@ jobs:
         run: |
           ls -al
           cp ./build/libs/*.jar ./docker/app.jar
-          cp -r ./src/main/resources/jmx ./docker/jmx
+          cp -r ./src/main/resources/jmx ./docker/
           
           ls -al ./docker/
           ls -al ./docker/jmx
