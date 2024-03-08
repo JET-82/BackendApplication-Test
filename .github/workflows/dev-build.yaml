@@ -72,6 +72,7 @@ jobs:
       - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
+          working-directory: ./docker
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: k-food-app
           IMAGE_TAG: ${{ github.run_number }}
