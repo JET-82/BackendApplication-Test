@@ -80,6 +80,9 @@ jobs:
           cp -r ./src/main/resources/jmx ./docker/jmx
           cd ./docker
           
+          ls -al ./docker
+          ls -al ./docker/jmx
+          
           echo "\nBuild Docker image ...\n"
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
