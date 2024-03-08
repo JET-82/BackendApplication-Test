@@ -6,7 +6,8 @@ on:
       - dev # 테스트를 위해 food branch push 이벤트 발생시 트리거
 
 env:
-  APPLICATION_RESOURCE_PATH: ./src/main/resources/application-dev.yaml
+  APPLICATION_DEV_YAML_PATH: ./src/main/resources/application-dev.yaml
+  APPLICATION_YAML_PATH: ./src/main/resources/application.yaml
 
 jobs:
   dev-build:
@@ -28,17 +29,26 @@ jobs:
         with:
           java-version: 11
 
-      - name: Set application yaml file
-        id: application-yaml-setup
+      - name: Set application dev yaml file
+        id: application-dev-yaml-setup
         uses: microsoft/variable-substitution@v1
         with:
           # application-dev.yaml 파일 내용 덮어쓰기
-          files: ${{ env.APPLICATION_RESOURCE_PATH }}
+          files: ${{ env.APPLICATION_DEV_YAML_PATH }}
         env:
           # GitHub Action Environment - Secret 참조
           spring.datasource.url: ${{ secrets.DB_URL }}
           spring.datasource.username: ${{ secrets.DB_USER }}
           spring.datasource.password: ${{ secrets.DB_PASS}}
+
+      - name: Set application yaml file
+        id: application-yaml-setup
+        uses: microsoft/variable-substitution@v1
+        with:
+          # application-dev.yaml 파일 내용 덮어쓰기
+          files: ${{ env.APPLICATION_YAML_PATH }}
+        env:
+          spring.profiles.active=${{ secrets.ACTIVE }}
 
       ######################
       # Gradle Build Steps #
@@ -72,16 +82,19 @@ jobs:
       - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
-          working-directory: ./docker
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: k-food-app
           IMAGE_TAG: ${{ github.run_number }}
         run: |
           cp ./build/libs/*.jar ./docker/
+          cp ./src/main/resources/jmx ./docker/jmx
           cd ./docker
+          
+          echo "\nBuild Docker image ...\n"
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          echo "Pushing image to ECR..."
+          
+          echo "\nPushing image to ECR...\n"
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
