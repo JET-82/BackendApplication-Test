@@ -5,5 +5,5 @@ COPY ./jmx/config.yaml ./config.yaml
 EXPOSE 8080
 EXPOSE 9090
 
-CMD java -javaagent:./jmx.jar=9090:./config.yaml -Dspring.profiles.active=dev -Xms128m -Xmx256m -jar ./app.jar
-#ENTRYPOINT ["java", "-javaagent:./jmx/jmx.jar=9090:./jmx/config.yaml", "-Dspring.profiles.active=dev", "-Xms128m", "-Xmx256m", "-jar","app.jar"]
+#CMD java -javaagent:./jmx.jar=9090:./config.yaml -Dspring.profiles.active=dev -Xms128m -Xmx256m -jar ./app.jar
+ENTRYPOINT ["java", "-javaagent:./jmx.jar=9090:./config.yaml", "-Dspring.profiles.active=dev", "-Xms128m", "-Xmx256m", "-jar","./app.jar"]
