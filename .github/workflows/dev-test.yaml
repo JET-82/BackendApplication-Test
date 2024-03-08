@@ -23,6 +23,8 @@ jobs:
       - name: ls -al
         run: |
           ls -al
+          ls -al ./src/main/resources
+          
 
 #      - name: Set up JDK 11
 #        id: jdk-11-setup
