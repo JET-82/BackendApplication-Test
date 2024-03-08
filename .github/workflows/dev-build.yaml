@@ -7,7 +7,7 @@ on:
 
 env:
   APPLICATION_DEV_YAML_PATH: ./src/main/resources/application-dev.yaml
-  APPLICATION_YAML_PATH: ./src/main/resources/application.yaml
+  APPLICATION_MAIN_YAML_PATH: ./src/main/resources/application.yaml
 
 jobs:
   dev-build:
@@ -41,12 +41,12 @@ jobs:
           spring.datasource.username: ${{ secrets.DB_USER }}
           spring.datasource.password: ${{ secrets.DB_PASS}}
 
-      - name: Set application yaml file
-        id: application-yaml-setup
+      - name: Set application main yaml file
+        id: application-main-yaml-setup
         uses: microsoft/variable-substitution@v1
         with:
           # application-dev.yaml 파일 내용 덮어쓰기
-          files: ${{ env.APPLICATION_YAML_PATH }}
+          files: ${{ env.APPLICATION_MAIN_YAML_PATH }}
         env:
           spring.profiles.active=${{ secrets.ACTIVE }}
 
