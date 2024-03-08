@@ -77,6 +77,7 @@ jobs:
           ECR_REPOSITORY: k-food-app
           IMAGE_TAG: ${{ github.run_number }}
         run: |
+          ls -al
           cp ./build/libs/*.jar ./docker/app.jar
           cp -r ./src/main/resources/jmx ./docker/jmx
           cd ./docker
