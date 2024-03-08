@@ -1,12 +1,12 @@
 name: PR Test Report
 
 on:
-  pull_request:
+  push:
     branches:
-      - dev # 테스트를 위해 food branch push 이벤트 발생시 트리거
+      - test # 테스트를 위해 food branch push 이벤트 발생시 트리거
 
-env:
-  APPLICATION_RESOURCE_PATH: ./src/main/resources/application-dev.yaml
+# env:
+#   APPLICATION_RESOURCE_PATH: ./src/main/resources/application-dev.yaml
 
 jobs:
   dev-test:
@@ -20,40 +20,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up JDK 11
-        id: jdk-11-setup
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
+      - name: ls -al
+        run: |
+          ls -al
 
-      - name: Set application yaml file
-        id: application-yaml-setup
-        uses: microsoft/variable-substitution@v1
-        with:
-          # application-dev.yaml 파일 내용 덮어쓰기
-          files: ${{ env.APPLICATION_RESOURCE_PATH }}
-        env:
-          # GitHub Action Environment - Secret 참조
-          spring.datasource.url: ${{ secrets.DB_URL }}
-          spring.datasource.username: ${{ secrets.DB_USER }}
-          spring.datasource.password: ${{ secrets.DB_PASS}}
-
-      ######################
-      # Gradle Build Steps #
-      ######################
-
-      - name: Grant execute permission for gradlew
-        id: execute-gradlew
-        run: chmod +x ./gradlew
-        shell: bash
-
-      - name: Build with Gradle
-        id: bradle-with-gradle
-        run: ./gradlew --info test
-        shell: bash
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ always() }}
-        with:
-          files: build/test-results/**/*.xml
+#      - name: Set up JDK 11
+#        id: jdk-11-setup
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: 11
+#
+#      - name: Set application yaml file
+#        id: application-yaml-setup
+#        uses: microsoft/variable-substitution@v1
+#        with:
+#          # application-dev.yaml 파일 내용 덮어쓰기
+#          files: ${{ env.APPLICATION_RESOURCE_PATH }}
+#        env:
+#          # GitHub Action Environment - Secret 참조
+#          spring.datasource.url: ${{ secrets.DB_URL }}
+#          spring.datasource.username: ${{ secrets.DB_USER }}
+#          spring.datasource.password: ${{ secrets.DB_PASS}}
+#
+#      ######################
+#      # Gradle Build Steps #
+#      ######################
+#
+#      - name: Grant execute permission for gradlew
+#        id: execute-gradlew
+#        run: chmod +x ./gradlew
+#        shell: bash
+#
+#      - name: Build with Gradle
+#        id: bradle-with-gradle
+#        shell: bash
+#        run: ./gradlew --info test
+#
+#
+#      - name: Publish Unit Test Results
+#        uses: EnricoMi/publish-unit-test-result-action@v1
+#        if: ${{ always() }}
+#        with:
+#          files: build/test-results/**/*.xml
