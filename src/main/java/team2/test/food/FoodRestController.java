@@ -30,16 +30,15 @@ public class FoodRestController {
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "게시글 조회 성공",
-            content = @Content(schema = @Schema(implementation = FoodResponseDto.class))),
+            description = "리스트 조회 성공",
+            content = @Content(schema = @Schema(implementation = List.class))),
       })
   @Operation(
       summary = "음식 리스트 조회.",
       description = "음식 리스트 반환.",
       responses = {@ApiResponse(responseCode = "200", description = "음식 리스트 정보.")})
   @GetMapping
-  public ResponseEntity<ResponseType.Result<List<FoodResponseDto>>> getFoodList(
-      HttpServletRequest request) {
+  public ResponseType.Result<List<FoodResponseDto>> getFoodList(HttpServletRequest request) {
 
     String clientIp = getClientIP(request);
 
@@ -50,7 +49,34 @@ public class FoodRestController {
 
     List<FoodResponseDto> responseDtos = foodService.getFoods();
 
-    return ResponseEntity.ok(ResponseType.success(responseDtos));
+    return ResponseType.success(responseDtos);
+  }
+
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "상세 조회 성공",
+            content = @Content(schema = @Schema(implementation = FoodResponseDto.class))),
+      })
+  @Operation(
+      summary = "음식 상세 조회.",
+      description = "음식 상세 정보 반환.",
+      responses = {@ApiResponse(responseCode = "200", description = "음식 상세 정보.")})
+  @GetMapping("/{foodId}")
+  public ResponseType.Result<FoodResponseDto> getFoodDetail(
+      @PathVariable Long foodId, HttpServletRequest request) {
+
+    String clientIp = getClientIP(request);
+
+    log.info("Client IP                : {}", clientIp);
+    log.info("Request from Remote Host : {}", request.getRemoteHost());
+    log.info("Request URI              : {}", request.getRequestURI());
+    log.info("Request Method           : {}", request.getMethod());
+
+    FoodResponseDto responseDto = foodService.getFoodDetail(foodId);
+
+    return ResponseType.success(responseDto);
   }
 
   @Operation(

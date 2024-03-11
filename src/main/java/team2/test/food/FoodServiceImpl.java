@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class FoodServiceImpl implements FoodService {
@@ -15,6 +17,17 @@ public class FoodServiceImpl implements FoodService {
     return foodJpaRepository.findAll().stream()
         .map(FoodResponseDto::fromEntity)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public FoodResponseDto getFoodDetail(Long foodId) {
+    return foodJpaRepository
+        .findById(foodId)
+        .map(FoodResponseDto::fromEntity)
+        .orElseThrow(
+            () ->
+                new EntityNotFoundException(
+                    String.format("Entity not found with id : %d", foodId)));
   }
 
   @Override
