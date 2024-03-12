@@ -54,6 +54,7 @@ jobs:
           spring.datasource.username: ${{ secrets.DB_USER }}
           spring.datasource.password: ${{ secrets.DB_PASS }}
           spring.datasource.driver-class-name: ${{ secrets.DB_DRIVER }}
+          spring.jpa.properties.hibernate.dialect: ${{ secrets.DB_DIALECT }}
 
       ######################
       # Gradle Build Steps #
