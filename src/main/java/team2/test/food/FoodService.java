@@ -9,4 +9,6 @@ public interface FoodService {
   FoodResponseDto registerFood(FoodRequestDto requestDto);
 
   FoodResponseDto getFoodDetail(Long foodId);
+
+  void deleteFood(Long foodId);
 }

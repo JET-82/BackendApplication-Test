@@ -3,6 +3,7 @@ package team2.test.food;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -35,5 +36,18 @@ public class FoodServiceImpl implements FoodService {
     FoodEntity newEntity = requestDto.toEntity();
     foodJpaRepository.save(newEntity);
     return FoodResponseDto.fromEntity(newEntity);
+  }
+
+  @Override
+  public void deleteFood(Long foodId) {
+    FoodEntity target =
+        foodJpaRepository
+            .findById(foodId)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        String.format("Entity not found with id : %d", foodId)));
+
+    foodJpaRepository.delete(target);
   }
 }
