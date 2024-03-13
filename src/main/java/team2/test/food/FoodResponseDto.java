@@ -34,4 +34,15 @@ public class FoodResponseDto {
         foodEntity.getPrice(),
         foodEntity.getImageLink());
   }
+
+  @Override
+  public String toString() {
+    return "FoodResponseDto{" +
+            "foodId=" + foodId +
+            ", foodName='" + foodName + '\'' +
+            ", description='" + description + '\'' +
+            ", price='" + price + '\'' +
+            ", imageLink='" + imageLink + '\'' +
+            '}';
+  }
 }
