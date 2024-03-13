@@ -103,6 +103,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: backend-prod-${{ matrix.region_alias }}
           IMAGE_TAG: ${{ github.run_number }}
+          PROFILE: ${{ secrets.PROFILE }}
         run: |
           ls -al
           cp ./build/libs/*.jar ./docker/app.jar
