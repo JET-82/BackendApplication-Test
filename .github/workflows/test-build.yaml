@@ -6,11 +6,11 @@ on:
       - test # 테스트를 위해 food branch push 이벤트 발생시 트리거
 
 env:
-  APPLICATION_PROD_YAML_PATH: ./src/main/resources/application-prod.yaml
+  APPLICATION_TEST_YAML_PATH: ./src/main/resources/application-test.yaml
 
 jobs:
-  prod-build:
-    name: Build to Production
+  test-build:
+    name: Build to Test
     environment: test # GitHub Action Secret Environment
     strategy:
       matrix:
@@ -47,7 +47,7 @@ jobs:
         uses: microsoft/variable-substitution@v1
         with:
           # application-dev.yaml 파일 내용 덮어쓰기
-          files: ${{ env.APPLICATION_PROD_YAML_PATH }}
+          files: ${{ env.APPLICATION_TEST_YAML_PATH }}
         env:
           # GitHub Action Environment - Secret참조
           spring.datasource.url: jdbc:${{ secrets.DB_TYPE }}://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ matrix.db_name }}
@@ -60,15 +60,15 @@ jobs:
       # Gradle Build Steps #
       ######################
 
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      # - name: Gradle Caching
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       ~/.gradle/caches
+      #       ~/.gradle/wrapper
+      #     key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-gradle-
 
       - name: Grant execute permission for gradlew
         id: execute-gradlew
@@ -101,14 +101,14 @@ jobs:
         env:
           working-directory: ./docker
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: backend-prod-${{ matrix.region_alias }}
+          ECR_REPOSITORY: backend-test-${{ matrix.region_alias }}
           IMAGE_TAG: ${{ github.run_number }}
           PROFILE: ${{ secrets.PROFILE }}
         run: |
           ls -al
           
           echo "\nBuild Docker image ...\n"
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./docker/prod/Dockerfile .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./docker/test/Dockerfile .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           
