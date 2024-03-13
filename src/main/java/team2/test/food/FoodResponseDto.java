@@ -11,19 +11,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class FoodResponseDto {
-  @Schema(description = "음식 ID")
+  @Schema(name = "음식 DB ID", example = "100", description = "음식 ID")
   private Long foodId;
 
-  @Schema(description = "음식 이름")
+  @Schema(name = "음식 이름", example = "불닭볶음면", description = "음식 이름")
   private String foodName;
 
-  @Schema(description = "음식 정보")
+  @Schema(name = "음식 설명", example = "굉장히 매운 불닭볶음면", description = "음식 정보")
   private String description;
 
-  @Schema(description = "음식 가격")
+  @Schema(name = "음식 가격", example = "₩10,000", description = "음식 가격")
   private String price;
 
-  @Schema(description = "음식 이미지 링크")
+  @Schema(name = "음식 이미지", example = "https://test.link", description = "음식 이미지 링크")
   private String imageLink;
 
   public static FoodResponseDto fromEntity(FoodEntity foodEntity) {
