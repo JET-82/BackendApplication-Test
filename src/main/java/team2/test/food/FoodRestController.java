@@ -79,6 +79,8 @@ public class FoodRestController {
 
     FoodResponseDto responseDto = foodService.getFoodDetail(foodId);
 
+    log.info("Response With             : {}", responseDto);
+
     return ResponseType.success(responseDto);
   }
 
@@ -93,6 +95,7 @@ public class FoodRestController {
     logClientInfo(request, requestDto);
 
     FoodResponseDto responseDto = foodService.registerFood(requestDto);
+
     return ResponseType.success(responseDto);
   }
 
