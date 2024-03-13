@@ -106,15 +106,9 @@ jobs:
           PROFILE: ${{ secrets.PROFILE }}
         run: |
           ls -al
-          cp ./build/libs/*.jar ./docker/app.jar
-          cp -r ./src/main/resources/jmx ./docker/
-          
-          ls -al ./docker/
-          ls -al ./docker/jmx
           
           echo "\nBuild Docker image ...\n"
-          cd ./docker
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg PROFILE=$PROFILE .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/prod/Dockerfile .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           
