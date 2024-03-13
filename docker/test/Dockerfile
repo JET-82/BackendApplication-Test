@@ -7,4 +7,4 @@ COPY ./build/resources/main/jmx/config.yaml ./config.yaml
 EXPOSE 8080
 EXPOSE 9090
 
-ENTRYPOINT ["java", "-javaagent:./jmx.jar=9090:./config.yaml", "-Dspring.profiles.active=prod", "-Xms128m", "-Xmx256m", "-jar","./app.jar"]
+ENTRYPOINT ["java", "-javaagent:./jmx.jar=9090:./config.yaml", "-Dspring.profiles.active=test", "-Xms128m", "-Xmx256m", "-jar","./app.jar"]
