@@ -1,4 +1,4 @@
-name: Build Docker Image and Deploy to ECR
+name: Pre - Build Docker Image and Deploy to ECR
 
 on:
   push:
@@ -107,7 +107,7 @@ jobs:
           ls -al
           
           echo "\nBuild Docker image ...\n"
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./docker/prod/Dockerfile .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./docker/pre/Dockerfile .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           
