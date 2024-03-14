@@ -3,7 +3,7 @@ name: Build Docker Image and Deploy to ECR
 on:
   push:
     branches:
-      - prod # 테스트를 위해 food branch push 이벤트 발생시 트리거
+      - stage # 테스트를 위해 food branch push 이벤트 발생시 트리거
 
 env:
   APPLICATION_TEST_YAML_PATH: ./src/main/resources/application-stage.yaml
