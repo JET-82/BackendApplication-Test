@@ -1,0 +1,117 @@
+name: Build Docker Image and Deploy to ECR
+
+on:
+  push:
+    branches:
+      - prod
+
+env:
+  APPLICATION_PROD_YAML_PATH: ./src/main/resources/application-prod.yaml
+
+jobs:
+  prod-build:
+    name: Build Product
+    environment: test # GitHub Action Secret Environment
+    strategy:
+      matrix:
+        region: [ ap-northeast-1, ap-northeast-2, ap-southeast-2 ] # 순서대로 도쿄 / 서울 / 시드니
+        include:
+          - region: ap-northeast-1
+            region_alias: tokyo
+            db_name: tokyoDB
+          - region: ap-northeast-2
+            region_alias: seoul
+            db_name: seoulDB
+          - region: ap-southeast-2
+            region_alias: sydney
+            db_name: sydneyDB
+
+    runs-on: ubuntu-latest
+    steps:
+
+      #####################
+      # Environment Setup #
+      #####################
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        id: jdk-11-setup
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Set application dev yaml file
+        id: application-dev-yaml-setup
+        uses: microsoft/variable-substitution@v1
+        with:
+          # application-dev.yaml 파일 내용 덮어쓰기
+          files: ${{ env.APPLICATION_PROD_YAML_PATH }}
+        env:
+          # GitHub Action Environment - Secret참조
+          spring.datasource.url: jdbc:${{ secrets.DB_TYPE }}://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ matrix.db_name }}
+          spring.datasource.username: ${{ secrets.DB_USER }}
+          spring.datasource.password: ${{ secrets.DB_PASS }}
+          spring.datasource.driver-class-name: ${{ secrets.DB_DRIVER }}
+          spring.jpa.properties.hibernate.dialect: ${{ secrets.DB_DIALECT }}
+
+      ######################
+      # Gradle Build Steps #
+      ######################
+
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        id: execute-gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Build with Gradle
+        id: bradle-with-gradle
+        run: ./gradlew clean build --stacktrace --info -x test
+        shell: bash
+
+      ########################
+      # 서울 리전 AWS ECR 이미지 배포 #
+      ########################
+
+      - name: Configure AWS credentials
+        id: configure-aws
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - id: login-ecr
+        name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
+        env:
+          working-directory: ./docker
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: backend-prod-${{ matrix.region_alias }}
+          IMAGE_TAG: ${{ github.run_number }}
+          PROFILE: ${{ secrets.PROFILE }}
+        run: |
+          ls -al
+          
+          echo "\nBuild Docker image ...\n"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./docker/prod/Dockerfile .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          
+          echo "\nPushing image to ECR...\n"
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
