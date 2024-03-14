@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public class FoodResponseDto {
   @Schema(name = "음식 DB ID", example = "100", description = "음식 ID")
-  private Long foodId;
+  private String id;
 
   @Schema(name = "음식 이름", example = "불닭볶음면", description = "음식 이름")
-  private String foodName;
+  private String name;
 
   @Schema(name = "음식 설명", example = "굉장히 매운 불닭볶음면", description = "음식 정보")
   private String description;
@@ -24,11 +24,11 @@ public class FoodResponseDto {
   private String price;
 
   @Schema(name = "음식 이미지", example = "https://test.link", description = "음식 이미지 링크")
-  private String imageLink;
+  private String image;
 
   public static FoodResponseDto fromEntity(FoodEntity foodEntity) {
     return new FoodResponseDto(
-        foodEntity.getFoodId(),
+        String.format("%d", foodEntity.getFoodId()),
         foodEntity.getFoodName(),
         foodEntity.getDescription(),
         foodEntity.getPrice(),
@@ -37,12 +37,21 @@ public class FoodResponseDto {
 
   @Override
   public String toString() {
-    return "FoodResponseDto{" +
-            "foodId=" + foodId +
-            ", foodName='" + foodName + '\'' +
-            ", description='" + description + '\'' +
-            ", price='" + price + '\'' +
-            ", imageLink='" + imageLink + '\'' +
-            '}';
+    return "FoodResponseDto{"
+        + "foodId="
+        + id
+        + ", foodName='"
+        + name
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", price='"
+        + price
+        + '\''
+        + ", imageLink='"
+        + image
+        + '\''
+        + '}';
   }
 }
