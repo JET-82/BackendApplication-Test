@@ -12,20 +12,6 @@ jobs:
   test-build:
     name: Build to Test
     environment: test # GitHub Action Secret Environment
-    strategy:
-      matrix:
-        region: [ ap-northeast-1, ap-northeast-2, ap-southeast-2 ] # 순서대로 도쿄 / 서울 / 시드니
-        include:
-          - region: ap-northeast-1
-            region_alias: tokyo
-            db_name: tokyoDB
-          - region: ap-northeast-2
-            region_alias: seoul
-            db_name: seoulDB
-          - region: ap-southeast-2
-            region_alias: sydney
-            db_name: sydneyDB
-
     runs-on: ubuntu-latest
     steps:
 
@@ -41,20 +27,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-
-      - name: Set application dev yaml file
-        id: application-dev-yaml-setup
-        uses: microsoft/variable-substitution@v1
-        with:
-          # application-dev.yaml 파일 내용 덮어쓰기
-          files: ${{ env.APPLICATION_TEST_YAML_PATH }}
-        env:
-          # GitHub Action Environment - Secret참조
-          spring.datasource.url: jdbc:${{ secrets.DB_TYPE }}://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ matrix.db_name }}
-          spring.datasource.username: ${{ secrets.DB_USER }}
-          spring.datasource.password: ${{ secrets.DB_PASS }}
-          spring.datasource.driver-class-name: ${{ secrets.DB_DRIVER }}
-          spring.jpa.properties.hibernate.dialect: ${{ secrets.DB_DIALECT }}
 
       ######################
       # Gradle Build Steps #
@@ -101,9 +73,8 @@ jobs:
         env:
           working-directory: ./docker
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: backend-test-${{ matrix.region_alias }}
+          ECR_REPOSITORY: backend-test
           IMAGE_TAG: ${{ github.run_number }}
-          PROFILE: ${{ secrets.PROFILE }}
         run: |
           ls -al
           
