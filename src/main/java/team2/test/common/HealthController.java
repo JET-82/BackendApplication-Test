@@ -6,7 +6,7 @@ import team2.test.utils.ResponseType;
 
 @RestController
 public class HealthController {
-  @GetMapping("/health")
+  @GetMapping("/")
   public ResponseType.Result<Object> health() {
     return ResponseType.success();
   }
