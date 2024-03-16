@@ -35,3 +35,7 @@ management:
     jmx:
       exposure:
         include: "*"
+
+logging:
+  pattern:
+    console: "%cyan([GatewayServer]) - %magenta([%d{yyyy:mm:dd HH:MM:ss}]) - %green([%logger{35}]) - %msg%n"
