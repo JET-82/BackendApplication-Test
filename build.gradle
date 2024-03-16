@@ -50,8 +50,8 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
     // Logging Format
-    compileOnly 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
-    compileOnly 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
 }
 
 test.useJUnitPlatform()
